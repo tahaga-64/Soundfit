@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Settings, Clock, StickyNote, ShoppingBag, UserPlus, UserCheck } from 'lucide-react';
+import { Settings, Clock, StickyNote, ShoppingBag, UserPlus, UserCheck, Sliders } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Genre, User } from '@/types';
 import { getSpotifyArtistId } from '@/data/spotifyIds';
@@ -93,6 +93,9 @@ export default function ProfilePage() {
           <button onClick={() => setShowSameCulture(true)} className="bg-bg-card rounded-xl p-4 flex items-center gap-3 hover:bg-border-primary transition-colors text-left">
             <UserPlus size={20} className="text-edm" /><span className="text-sm font-medium">仲間を探す</span>
           </button>
+          <Link to="/settings" className="bg-bg-card rounded-xl p-4 flex items-center gap-3 hover:bg-border-primary transition-colors col-span-2">
+            <Sliders size={20} className="text-text-secondary" /><span className="text-sm font-medium">設定・API連携</span>
+          </Link>
         </div>
       )}
 
