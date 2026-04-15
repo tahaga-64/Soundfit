@@ -24,6 +24,7 @@ import DiscographyNotesPage from '@/pages/DiscographyNotesPage';
 import MarketplacePage from '@/pages/MarketplacePage';
 import ListingDetailPage from '@/pages/ListingDetailPage';
 import CollaboratePage from '@/pages/CollaboratePage';
+import ArtistPage from '@/pages/ArtistPage';
 
 export default function App() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/:id" element={<ListingDetailPage />} />
             <Route path="/collaborate" element={<CollaboratePage />} />
+            <Route path="/artist/:artistName" element={<ArtistPage />} />
           </Route>
         </Routes>
       </AppProvider>

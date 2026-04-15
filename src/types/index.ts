@@ -24,6 +24,8 @@ export interface Song {
   year: number;
   coverUrl: string;
   votes?: number;
+  spotifyTrackId?: string;
+  spotifyArtistId?: string;
 }
 
 // プレイリスト
@@ -42,6 +44,7 @@ export interface Playlist {
 export interface LiveEvent {
   id: string;
   artist: string;
+  spotifyArtistId?: string;
   venue: string;
   date: string;
   genre: Genre;

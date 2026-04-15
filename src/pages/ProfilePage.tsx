@@ -3,8 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { Settings, Clock, StickyNote, ShoppingBag, UserPlus, UserCheck } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Genre, User } from '@/types';
+import { getSpotifyArtistId } from '@/data/spotifyIds';
 import UserAvatar from '@/components/ui/UserAvatar';
 import GenreBadge from '@/components/ui/GenreBadge';
+import { SpotifyLink } from '@/components/ui/SpotifyButton';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Card from '@/components/ui/Card';
@@ -63,9 +65,16 @@ export default function ProfilePage() {
       <Card>
         <h3 className="font-bold text-sm mb-2">お気に入りアーティスト</h3>
         <div className="flex flex-wrap gap-2">
-          {profileUser.favoriteArtists.map(a => (
-            <span key={a} className="text-xs bg-bg-secondary px-3 py-1 rounded-full">{a}</span>
-          ))}
+          {profileUser.favoriteArtists.map(a => {
+            const spotifyId = getSpotifyArtistId(a);
+            const spotifyUrl = spotifyId ? `https://open.spotify.com/artist/${spotifyId}` : undefined;
+            return (
+              <Link key={a} to={`/artist/${encodeURIComponent(a)}`} className="inline-flex items-center gap-1.5 text-xs bg-bg-secondary px-3 py-1 rounded-full hover:bg-border-primary transition-colors">
+                {a}
+                {spotifyUrl && <SpotifyLink url={spotifyUrl} size={12} />}
+              </Link>
+            );
+          })}
         </div>
       </Card>
 
