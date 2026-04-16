@@ -1,5 +1,10 @@
 // ジャンル型定義
-export type Genre = 'hiphop' | 'rock' | 'visualkei' | 'citypop' | 'edm' | 'jazz' | 'rnb' | 'punk';
+export type Genre =
+  | 'hiphop' | 'rock' | 'visualkei' | 'citypop' | 'edm' | 'jazz' | 'rnb' | 'punk'
+  | 'jpop' | 'kpop' | 'metal' | 'indie' | 'shoegaze' | 'postrock' | 'mathrock'
+  | 'idol' | 'anisong' | 'vocaloid' | 'enka' | 'classical' | 'ambient'
+  | 'reggae' | 'soul' | 'funk' | 'trap' | 'lofi' | 'house' | 'techno'
+  | 'blues' | 'folk' | 'latin' | 'ska' | 'hardcore' | 'emo';
 
 // ユーザー
 export interface User {
@@ -183,6 +188,18 @@ export interface GalleryPhoto {
   artist: string;
   caption: string;
   userId: string;
+  timestamp: string;
+}
+
+// ユーザー投稿（Instagram風）
+export interface UserPost {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  caption: string;
+  tags: string[];
+  likes: number;
+  comments: { userId: string; text: string; timestamp: string }[];
   timestamp: string;
 }
 

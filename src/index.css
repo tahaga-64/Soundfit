@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* 既存ジャンル */
   --color-hiphop: #FFD700;
   --color-rock: #DC2626;
   --color-visualkei: #7C3AED;
@@ -9,6 +10,34 @@
   --color-jazz: #F59E0B;
   --color-rnb: #EC4899;
   --color-punk: #22C55E;
+  /* 新規ジャンル */
+  --color-jpop: #FF6B6B;
+  --color-kpop: #A855F7;
+  --color-metal: #6B7280;
+  --color-indie: #8B5CF6;
+  --color-shoegaze: #C084FC;
+  --color-postrock: #64748B;
+  --color-mathrock: #06B6D4;
+  --color-idol: #FB7185;
+  --color-anisong: #F472B6;
+  --color-vocaloid: #2DD4BF;
+  --color-enka: #D97706;
+  --color-classical: #FBBF24;
+  --color-ambient: #818CF8;
+  --color-reggae: #A3E635;
+  --color-soul: #E879F9;
+  --color-funk: #FB923C;
+  --color-trap: #EF4444;
+  --color-lofi: #94A3B8;
+  --color-house: #FACC15;
+  --color-techno: #22D3EE;
+  --color-blues: #6366F1;
+  --color-folk: #A78BFA;
+  --color-latin: #F97316;
+  --color-ska: #34D399;
+  --color-hardcore: #B91C1C;
+  --color-emo: #1E293B;
+  /* ベースUI */
   --color-bg-primary: #0F0F0F;
   --color-bg-secondary: #1A1A1A;
   --color-bg-card: #242424;

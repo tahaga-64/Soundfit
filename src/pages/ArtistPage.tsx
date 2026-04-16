@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Users, Music, Disc3, Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Users, Music, Disc3, Calendar, MapPin, ExternalLink, Loader2 } from 'lucide-react';
 import { songs, events } from '@/data';
 import { getSpotifyArtistId } from '@/data/spotifyIds';
+import { searchArtist, getArtistTopTracks, hasSpotifyCredentials, getSpotifySearchUrl, type SpotifyArtist, type SpotifyTrack } from '@/utils/spotify';
 import { SpotifyOpenButton, SpotifyLink } from '@/components/ui/SpotifyButton';
 import GenreBadge from '@/components/ui/GenreBadge';
 import SongRow from '@/components/ui/SongRow';
@@ -12,19 +13,52 @@ import { formatDate } from '@/utils/formatters';
 export default function ArtistPage() {
   const { artistName } = useParams();
   const navigate = useNavigate();
-  const [embedError, setEmbedError] = useState(false);
-
-  // React Router v6 は URL パラメータを自動デコードする
   const decodedName = artistName || '';
-  const spotifyId = getSpotifyArtistId(decodedName);
-  const spotifyUrl = spotifyId ? `https://open.spotify.com/artist/${spotifyId}` : undefined;
+  const staticSpotifyId = getSpotifyArtistId(decodedName);
+
+  // Spotify API からのデータ
+  const [spotifyArtist, setSpotifyArtist] = useState<SpotifyArtist | null>(null);
+  const [topTracks, setTopTracks] = useState<SpotifyTrack[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState(false);
 
   // このアーティストの楽曲を取得
   const artistSongs = songs.filter(s => s.artist === decodedName);
-  // このアーティストのイベントを取得
   const artistEvents = events.filter(e => e.artist === decodedName);
-  // メインジャンルを判定
   const mainGenre = artistSongs.length > 0 ? artistSongs[0].genre : artistEvents.length > 0 ? artistEvents[0].genre : undefined;
+
+  // Spotify APIでアーティスト情報を取得
+  useEffect(() => {
+    if (!decodedName || !hasSpotifyCredentials()) return;
+
+    let cancelled = false;
+    setLoading(true);
+
+    (async () => {
+      try {
+        const results = await searchArtist(decodedName);
+        if (cancelled) return;
+        if (results.length > 0) {
+          const artist = results[0];
+          setSpotifyArtist(artist);
+          const tracks = await getArtistTopTracks(artist.id);
+          if (!cancelled) setTopTracks(tracks.slice(0, 5));
+        }
+      } catch {
+        if (!cancelled) setApiError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [decodedName]);
+
+  // Spotify URL: APIから取得 > 静的ID > 検索URL
+  const spotifyUrl = spotifyArtist?.external_urls.spotify
+    || (staticSpotifyId ? `https://open.spotify.com/artist/${staticSpotifyId}` : undefined);
+  const spotifyId = spotifyArtist?.id || staticSpotifyId;
+  const artistImage = spotifyArtist?.images?.[0]?.url;
 
   if (!decodedName) {
     return <p className="text-center py-8 text-text-secondary">アーティストが見つかりません</p>;
@@ -39,27 +73,46 @@ export default function ArtistPage() {
       {/* アーティストヘッダー */}
       <div className="text-center space-y-3">
         <div className="w-28 h-28 rounded-full mx-auto bg-bg-card flex items-center justify-center overflow-hidden">
-          <img
-            src={`https://picsum.photos/seed/${encodeURIComponent(decodedName)}/200/200`}
-            alt={decodedName}
-            className="w-full h-full object-cover"
-            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
+          {artistImage ? (
+            <img src={artistImage} alt={decodedName} className="w-full h-full object-cover" />
+          ) : (
+            <img
+              src={`https://picsum.photos/seed/${encodeURIComponent(decodedName)}/200/200`}
+              alt={decodedName}
+              className="w-full h-full object-cover"
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          )}
         </div>
         <h1 className="text-2xl font-bold">{decodedName}</h1>
+        {spotifyArtist && (
+          <p className="text-xs text-text-secondary">
+            {spotifyArtist.followers.total.toLocaleString()} フォロワー
+          </p>
+        )}
         <div className="flex items-center justify-center gap-2 flex-wrap">
           {mainGenre && <GenreBadge genre={mainGenre} size="md" />}
           {spotifyUrl && <SpotifyLink url={spotifyUrl} size={20} />}
         </div>
-        {spotifyUrl && (
-          <div>
+
+        {/* Spotifyで開くボタン */}
+        <div>
+          {spotifyUrl ? (
             <SpotifyOpenButton url={spotifyUrl} />
-          </div>
+          ) : (
+            <SpotifyOpenButton url={getSpotifySearchUrl(decodedName)} label="Spotifyで検索" />
+          )}
+        </div>
+
+        {loading && (
+          <p className="text-xs text-text-secondary flex items-center justify-center gap-1">
+            <Loader2 size={12} className="animate-spin" /> Spotify情報を取得中...
+          </p>
         )}
       </div>
 
       {/* Spotify 埋め込みプレイヤー */}
-      {spotifyId && !embedError && (
+      {spotifyId && (
         <Card>
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
             <Music size={16} className="text-[#1DB954]" />Spotifyで聴く
@@ -73,24 +126,36 @@ export default function ArtistPage() {
             loading="lazy"
             className="rounded-xl"
             title={`${decodedName} on Spotify`}
-            onError={() => setEmbedError(true)}
           />
         </Card>
       )}
 
-      {/* 埋め込みエラー時のフォールバック */}
-      {spotifyId && embedError && (
+      {/* Spotify APIのトップトラック */}
+      {topTracks.length > 0 && (
         <Card>
-          <div className="text-center py-4 space-y-3">
-            <p className="text-sm text-text-secondary">Spotifyプレイヤーを読み込めませんでした</p>
-            <a
-              href={spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#1DB954] text-sm hover:underline"
-            >
-              Spotifyアプリで開く <ExternalLink size={14} />
-            </a>
+          <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
+            <Music size={16} />人気の楽曲（Spotify）
+          </h3>
+          <div className="space-y-2">
+            {topTracks.map((track, i) => (
+              <a
+                key={track.id}
+                href={track.external_urls.spotify}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 py-1.5 hover:bg-bg-secondary rounded-lg px-1 transition-colors"
+              >
+                <span className="text-text-secondary font-bold text-sm w-5 text-center">{i + 1}</span>
+                {track.album.images[2] && (
+                  <img src={track.album.images[2].url} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{track.name}</p>
+                  <p className="text-xs text-text-secondary truncate">{track.album.name}</p>
+                </div>
+                <ExternalLink size={12} className="text-text-secondary shrink-0" />
+              </a>
+            ))}
           </div>
         </Card>
       )}
@@ -136,22 +201,19 @@ export default function ArtistPage() {
         </Card>
       )}
 
-      {/* Spotify IDがない場合 */}
-      {!spotifyId && (
+      {/* API未設定の案内 */}
+      {!hasSpotifyCredentials() && !spotifyId && (
         <Card>
           <div className="text-center py-4 space-y-2">
             <Users size={24} className="mx-auto text-text-secondary" />
-            <p className="text-sm text-text-secondary">
-              このアーティストのSpotify連携は未設定です
-            </p>
-            <p className="text-xs text-text-secondary">
-              設定画面からSpotify APIを設定すると、より多くの情報が表示されます
-            </p>
-            <Link to="/settings" className="text-xs text-hiphop hover:underline">
-              設定画面へ →
-            </Link>
+            <p className="text-sm text-text-secondary">Spotify APIを設定するとアーティスト情報が表示されます</p>
+            <Link to="/settings" className="text-xs text-hiphop hover:underline">設定画面へ →</Link>
           </div>
         </Card>
+      )}
+
+      {apiError && (
+        <p className="text-xs text-text-secondary text-center">Spotify API接続に失敗しました。設定を確認してください。</p>
       )}
     </div>
   );

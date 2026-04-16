@@ -1,5 +1,5 @@
 // Spotify Web API ユーティリティ
-// Client Credentials Flow でアクセストークンを取得し、各種APIを呼び出す
+// localStorage の credentials で直接 or Vite proxy 経由でAPIを呼び出す
 
 // --- 型定義 ---
 export interface SpotifyArtist {
@@ -40,13 +40,51 @@ export interface SpotifySearchResult {
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
 
+// localStorageからSpotify認証情報を取得
+function getStoredCredentials() {
+  return {
+    clientId: localStorage.getItem('soundfit_spotify_client_id') || '',
+    clientSecret: localStorage.getItem('soundfit_spotify_client_secret') || '',
+  };
+}
+
+// 認証情報が設定されているかチェック
+export function hasSpotifyCredentials(): boolean {
+  const { clientId, clientSecret } = getStoredCredentials();
+  return clientId.length > 0 && clientSecret.length > 0;
+}
+
 // Client Credentials Flow でアクセストークン取得
 async function getAccessToken(): Promise<string> {
-  // キャッシュが有効ならそのまま返す
   if (cachedToken && Date.now() < tokenExpiresAt) {
     return cachedToken;
   }
 
+  const { clientId, clientSecret } = getStoredCredentials();
+
+  if (clientId && clientSecret) {
+    // localStorage の credentials で直接 Spotify API を叩く
+    const credentials = btoa(`${clientId}:${clientSecret}`);
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${credentials}`,
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Spotifyトークン取得に失敗: ${response.status}`);
+    }
+
+    const data = await response.json();
+    cachedToken = data.access_token;
+    tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
+    return cachedToken!;
+  }
+
+  // フォールバック: Vite proxy 経由
   const response = await fetch('/api/spotify/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -59,7 +97,6 @@ async function getAccessToken(): Promise<string> {
 
   const data = await response.json();
   cachedToken = data.access_token;
-  // 有効期限の少し前にリフレッシュ
   tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
   return cachedToken!;
 }
@@ -67,7 +104,11 @@ async function getAccessToken(): Promise<string> {
 // 認証付きAPI呼び出しヘルパー
 async function spotifyFetch<T>(endpoint: string): Promise<T> {
   const token = await getAccessToken();
-  const response = await fetch(`/api/spotify${endpoint}`, {
+  const { clientId } = getStoredCredentials();
+
+  // credentials があればSpotify API直接、なければViteプロキシ
+  const baseUrl = clientId ? 'https://api.spotify.com/v1' : '/api/spotify';
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -136,6 +177,11 @@ export function getSpotifyArtistUrl(artistId: string): string {
   return `https://open.spotify.com/artist/${artistId}`;
 }
 
+// Spotify検索URLを生成（IDがなくても使える）
+export function getSpotifySearchUrl(query: string): string {
+  return `https://open.spotify.com/search/${encodeURIComponent(query)}`;
+}
+
 // Spotify埋め込みURLを生成
 export function getSpotifyEmbedUrl(type: 'track' | 'artist' | 'album', id: string): string {
   return `https://open.spotify.com/embed/${type}/${id}?theme=0`;
@@ -146,4 +192,10 @@ export function formatDuration(ms: number): string {
   const minutes = Math.floor(ms / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// トークンキャッシュをクリア（credentials変更時に呼ぶ）
+export function clearSpotifyTokenCache(): void {
+  cachedToken = null;
+  tokenExpiresAt = 0;
 }
