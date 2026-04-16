@@ -1,5 +1,4 @@
-// アーティスト名 → Spotify Artist ID マッピング
-// 実際のSpotify IDを使用
+// アーティスト名 → Spotify Artist ID マッピング（埋め込みプレイヤー用）
 export const artistSpotifyIds: Record<string, string> = {
   'ZORN': '7FMXFo1gEYAdxy9eWFHsw6',
   'PUNPEE': '5XO4xyeszLrSmFJsAe3OsD',
@@ -46,13 +45,12 @@ export const artistSpotifyIds: Record<string, string> = {
   'LUNA SEA': '3rq7bFKjfaxRcGREdun46X',
 };
 
-// アーティスト名からSpotify IDを取得するヘルパー
+// アーティスト名からSpotify IDを取得（埋め込みプレイヤー用）
 export function getSpotifyArtistId(artistName: string): string | undefined {
   return artistSpotifyIds[artistName];
 }
 
-// Spotify アーティストURLを生成
-export function getSpotifyArtistUrl(artistName: string): string | undefined {
-  const id = artistSpotifyIds[artistName];
-  return id ? `https://open.spotify.com/artist/${id}` : undefined;
+// Spotify検索URLを生成（IDに依存しないため常に動作する）
+export function getSpotifyArtistUrl(artistName: string): string {
+  return `https://open.spotify.com/search/${encodeURIComponent(artistName)}`;
 }

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Users, Music, Disc3, Calendar, MapPin, ExternalLink, Loader2 } from 'lucide-react';
 import { songs, events } from '@/data';
-import { getSpotifyArtistId } from '@/data/spotifyIds';
-import { searchArtist, getArtistTopTracks, hasSpotifyCredentials, getSpotifySearchUrl, type SpotifyArtist, type SpotifyTrack } from '@/utils/spotify';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
+import { searchArtist, getArtistTopTracks, hasSpotifyCredentials, type SpotifyArtist, type SpotifyTrack } from '@/utils/spotify';
 import { SpotifyOpenButton, SpotifyLink } from '@/components/ui/SpotifyButton';
 import GenreBadge from '@/components/ui/GenreBadge';
 import SongRow from '@/components/ui/SongRow';
@@ -14,20 +14,16 @@ export default function ArtistPage() {
   const { artistName } = useParams();
   const navigate = useNavigate();
   const decodedName = artistName || '';
-  const staticSpotifyId = getSpotifyArtistId(decodedName);
 
-  // Spotify API からのデータ
   const [spotifyArtist, setSpotifyArtist] = useState<SpotifyArtist | null>(null);
   const [topTracks, setTopTracks] = useState<SpotifyTrack[]>([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(false);
 
-  // このアーティストの楽曲を取得
   const artistSongs = songs.filter(s => s.artist === decodedName);
   const artistEvents = events.filter(e => e.artist === decodedName);
   const mainGenre = artistSongs.length > 0 ? artistSongs[0].genre : artistEvents.length > 0 ? artistEvents[0].genre : undefined;
 
-  // Spotify APIでアーティスト情報を取得
   useEffect(() => {
     if (!decodedName || !hasSpotifyCredentials()) return;
 
@@ -54,10 +50,7 @@ export default function ArtistPage() {
     return () => { cancelled = true; };
   }, [decodedName]);
 
-  // Spotify URL: APIから取得 > 静的ID > 検索URL
-  const spotifyUrl = spotifyArtist?.external_urls.spotify
-    || (staticSpotifyId ? `https://open.spotify.com/artist/${staticSpotifyId}` : undefined);
-  const spotifyId = spotifyArtist?.id || staticSpotifyId;
+  const spotifyUrl = spotifyArtist?.external_urls.spotify || getSpotifyArtistUrl(decodedName);
   const artistImage = spotifyArtist?.images?.[0]?.url;
 
   if (!decodedName) {
@@ -70,9 +63,8 @@ export default function ArtistPage() {
         <ArrowLeft size={16} />戻る
       </button>
 
-      {/* アーティストヘッダー */}
       <div className="text-center space-y-3">
-        <div className="w-28 h-28 rounded-full mx-auto bg-bg-card flex items-center justify-center overflow-hidden">
+        <div className="w-28 h-28 rounded-full mx-auto bg-bg-card flex items-center justify-center overflow-hidden shadow-md">
           {artistImage ? (
             <img src={artistImage} alt={decodedName} className="w-full h-full object-cover" />
           ) : (
@@ -92,16 +84,11 @@ export default function ArtistPage() {
         )}
         <div className="flex items-center justify-center gap-2 flex-wrap">
           {mainGenre && <GenreBadge genre={mainGenre} size="md" />}
-          {spotifyUrl && <SpotifyLink url={spotifyUrl} size={20} />}
+          <SpotifyLink url={spotifyUrl} size={20} />
         </div>
 
-        {/* Spotifyで開くボタン */}
         <div>
-          {spotifyUrl ? (
-            <SpotifyOpenButton url={spotifyUrl} />
-          ) : (
-            <SpotifyOpenButton url={getSpotifySearchUrl(decodedName)} label="Spotifyで検索" />
-          )}
+          <SpotifyOpenButton url={spotifyUrl} />
         </div>
 
         {loading && (
@@ -111,14 +98,14 @@ export default function ArtistPage() {
         )}
       </div>
 
-      {/* Spotify 埋め込みプレイヤー */}
-      {spotifyId && (
+      {/* Spotify 埋め込みプレイヤー（API経由でIDが取得できた場合のみ） */}
+      {spotifyArtist?.id && (
         <Card>
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
             <Music size={16} className="text-[#1DB954]" />Spotifyで聴く
           </h3>
           <iframe
-            src={`https://open.spotify.com/embed/artist/${spotifyId}?utm_source=generator&theme=0`}
+            src={`https://open.spotify.com/embed/artist/${spotifyArtist.id}?utm_source=generator&theme=0`}
             width="100%"
             height="352"
             frameBorder="0"
@@ -130,7 +117,6 @@ export default function ArtistPage() {
         </Card>
       )}
 
-      {/* Spotify APIのトップトラック */}
       {topTracks.length > 0 && (
         <Card>
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
@@ -160,7 +146,6 @@ export default function ArtistPage() {
         </Card>
       )}
 
-      {/* アプリ内の楽曲 */}
       {artistSongs.length > 0 && (
         <Card>
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
@@ -174,7 +159,6 @@ export default function ArtistPage() {
         </Card>
       )}
 
-      {/* 関連ライブ */}
       {artistEvents.length > 0 && (
         <Card>
           <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
@@ -201,8 +185,7 @@ export default function ArtistPage() {
         </Card>
       )}
 
-      {/* API未設定の案内 */}
-      {!hasSpotifyCredentials() && !spotifyId && (
+      {!hasSpotifyCredentials() && (
         <Card>
           <div className="text-center py-4 space-y-2">
             <Users size={24} className="mx-auto text-text-secondary" />

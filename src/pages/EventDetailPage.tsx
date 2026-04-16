@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, Music } from 'lucide-react';
 import { events, impressions } from '@/data';
-import { getSpotifyArtistId } from '@/data/spotifyIds';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
 import GenreBadge from '@/components/ui/GenreBadge';
 import { SpotifyOpenButton } from '@/components/ui/SpotifyButton';
 import PostCard from '@/components/ui/PostCard';
@@ -15,8 +15,7 @@ export default function EventDetailPage() {
   if (!event) return <p className="text-center py-8 text-text-secondary">イベントが見つかりません</p>;
 
   const eventImpressions = impressions.filter(i => i.eventId === event.id);
-  const spotifyId = getSpotifyArtistId(event.artist);
-  const spotifyUrl = spotifyId ? `https://open.spotify.com/artist/${spotifyId}` : undefined;
+  const spotifyUrl = getSpotifyArtistUrl(event.artist);
 
   return (
     <div className="space-y-4 py-4 animate-fade-in">
@@ -39,7 +38,7 @@ export default function EventDetailPage() {
       <div className="flex items-center gap-4 text-sm text-text-secondary">
         <span className="flex items-center gap-1"><MapPin size={14} />{event.venue}</span>
         <span className="flex items-center gap-1"><Calendar size={14} />{formatDate(event.date)}</span>
-        {spotifyUrl && <SpotifyOpenButton url={spotifyUrl} label="Spotify" />}
+        <SpotifyOpenButton url={spotifyUrl} label="Spotify" />
       </div>
 
       {/* セットリスト */}

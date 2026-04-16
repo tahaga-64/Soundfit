@@ -22,7 +22,7 @@ export default function PostCard({ userId, content, timestamp, tags, likes = 0, 
   if (!user) return null;
 
   return (
-    <div className="bg-bg-card rounded-xl p-4 space-y-3" onClick={onClick}>
+    <div className="bg-bg-card rounded-xl p-4 space-y-3 shadow-sm border border-border-primary" onClick={onClick}>
       {/* ヘッダー */}
       <div className="flex items-center gap-3">
         <UserAvatar src={user.avatar} name={user.name} size="sm" />

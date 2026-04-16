@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 import type { Song } from '@/types';
-import { getSpotifyArtistId } from '@/data/spotifyIds';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
 import { SpotifyLink } from './SpotifyButton';
 import GenreBadge from './GenreBadge';
 
 // 楽曲1行表示コンポーネント
 export default function SongRow({ song, rank, action }: { song: Song; rank?: number; action?: React.ReactNode }) {
-  const spotifyId = getSpotifyArtistId(song.artist);
-  const spotifyUrl = spotifyId ? `https://open.spotify.com/artist/${spotifyId}` : undefined;
+  const spotifyUrl = getSpotifyArtistUrl(song.artist);
 
   return (
     <div className="flex items-center gap-3 py-2">
@@ -19,7 +18,7 @@ export default function SongRow({ song, rank, action }: { song: Song; rank?: num
           {song.artist}
         </Link>
       </div>
-      {spotifyUrl && <SpotifyLink url={spotifyUrl} size={16} />}
+      <SpotifyLink url={spotifyUrl} size={16} />
       <GenreBadge genre={song.genre} />
       {action}
     </div>

@@ -7,7 +7,7 @@ export default function WelcomePage() {
       {/* ロゴ・ブランド */}
       <div className="text-center space-y-4 mb-12">
         <div className="w-20 h-20 bg-gradient-to-br from-hiphop via-edm to-visualkei rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-          <Headphones size={40} className="text-black" />
+          <Headphones size={40} className="text-white" />
         </div>
         <h1 className="text-4xl font-black tracking-tight">Soundfit</h1>
         <p className="text-text-secondary text-sm max-w-xs mx-auto leading-relaxed">

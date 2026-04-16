@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { playlists, songs, users } from '@/data';
-import { getSpotifyArtistId } from '@/data/spotifyIds';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
 import GenreBadge from '@/components/ui/GenreBadge';
 import SongRow from '@/components/ui/SongRow';
 import UserAvatar from '@/components/ui/UserAvatar';
@@ -17,6 +17,7 @@ export default function PlaylistDetailPage() {
 
   const creator = users.find(u => u.id === playlist.creatorId);
   const playlistSongs = playlist.songIds.map(sid => songs.find(s => s.id === sid)).filter(Boolean);
+  const firstSong = playlistSongs[0];
 
   return (
     <div className="space-y-4 py-4 animate-fade-in">
@@ -37,16 +38,11 @@ export default function PlaylistDetailPage() {
             <span className="text-sm">{creator.name}</span>
           </div>
         )}
-        {/* Spotifyで聴くボタン — プレイリスト内の代表アーティストのSpotifyページへ */}
-        {(() => {
-          const firstSong = playlistSongs[0];
-          const artistId = firstSong ? getSpotifyArtistId(firstSong.artist) : undefined;
-          return artistId ? (
-            <div className="pt-1">
-              <SpotifyOpenButton url={`https://open.spotify.com/artist/${artistId}`} label="Spotifyで聴く" />
-            </div>
-          ) : null;
-        })()}
+        {firstSong && (
+          <div className="pt-1">
+            <SpotifyOpenButton url={getSpotifyArtistUrl(firstSong.artist)} label="Spotifyで聴く" />
+          </div>
+        )}
       </div>
       <div className="bg-bg-card rounded-xl p-4">
         <h3 className="font-bold text-sm mb-2">{playlistSongs.length}曲</h3>

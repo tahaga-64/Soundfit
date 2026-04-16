@@ -147,6 +147,15 @@ export interface TimelineEntry {
   note: string;
 }
 
+// 商品状態
+export type ItemCondition = 'new' | 'like_new' | 'good' | 'fair' | 'poor' | 'bad';
+
+// 配送方法
+export type ShippingMethod = 'soundfit_easy' | 'soundfit_yu' | 'standard_mail' | 'click_post';
+
+// 取引ステータス
+export type TransactionStatus = 'listing' | 'in_transaction' | 'shipped' | 'received' | 'completed' | 'cancelled';
+
 // フリマ出品
 export interface MarketplaceListing {
   id: string;
@@ -157,7 +166,15 @@ export interface MarketplaceListing {
   images: string[];
   category: 'goods' | 'clothing' | 'vinyl' | 'ticket' | 'other';
   genre: Genre;
+  condition: ItemCondition;
+  shippingMethod: ShippingMethod;
+  shippingPayer: 'seller' | 'buyer';
+  shippingCost: number;
+  isAnonymousShipping: boolean;
+  transactionStatus: TransactionStatus;
   status: 'available' | 'sold';
+  likes: number;
+  views: number;
   createdAt: string;
 }
 
