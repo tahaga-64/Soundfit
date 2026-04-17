@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Heart, MessageCircle, UserPlus, UserCheck, Sliders, Plus, X, ImagePlus, Music, Award, ShoppingBag, Sparkles, BookOpen, Eye } from 'lucide-react';
+import { Heart, MessageCircle, UserPlus, UserCheck, Sliders, Plus, X, ImagePlus, Music, Award, ShoppingBag, Sparkles, BookOpen } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import type { Genre, User, UserPost } from '@/types';
 import { posts as allPosts } from '@/data';
