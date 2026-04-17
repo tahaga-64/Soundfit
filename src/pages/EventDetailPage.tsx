@@ -1,7 +1,9 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, Music } from 'lucide-react';
 import { events, impressions } from '@/data';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
 import GenreBadge from '@/components/ui/GenreBadge';
+import { SpotifyOpenButton } from '@/components/ui/SpotifyButton';
 import PostCard from '@/components/ui/PostCard';
 import { formatDate } from '@/utils/formatters';
 
@@ -13,6 +15,7 @@ export default function EventDetailPage() {
   if (!event) return <p className="text-center py-8 text-text-secondary">イベントが見つかりません</p>;
 
   const eventImpressions = impressions.filter(i => i.eventId === event.id);
+  const spotifyUrl = getSpotifyArtistUrl(event.artist);
 
   return (
     <div className="space-y-4 py-4 animate-fade-in">
@@ -26,13 +29,16 @@ export default function EventDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xl" />
         <div className="absolute bottom-4 left-4 right-4">
           <GenreBadge genre={event.genre} size="md" />
-          <h1 className="text-2xl font-bold mt-2">{event.artist}</h1>
+          <Link to={`/artist/${encodeURIComponent(event.artist)}`} className="text-2xl font-bold mt-2 block hover:text-[#1DB954] transition-colors">
+            {event.artist}
+          </Link>
         </div>
       </div>
 
-      <div className="flex gap-4 text-sm text-text-secondary">
+      <div className="flex items-center gap-4 text-sm text-text-secondary">
         <span className="flex items-center gap-1"><MapPin size={14} />{event.venue}</span>
         <span className="flex items-center gap-1"><Calendar size={14} />{formatDate(event.date)}</span>
+        <SpotifyOpenButton url={spotifyUrl} label="Spotify" />
       </div>
 
       {/* セットリスト */}

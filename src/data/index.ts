@@ -11,3 +11,5 @@ export { badges } from './badges';
 export { collaborations } from './collaborations';
 export { galleryPhotos } from './gallery';
 export { hiddenGems } from './hiddenGems';
+export { artistSpotifyIds, getSpotifyArtistId, getSpotifyArtistUrl } from './spotifyIds';
+export { posts } from './posts';

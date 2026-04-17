@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* 既存ジャンル */
   --color-hiphop: #FFD700;
   --color-rock: #DC2626;
   --color-visualkei: #7C3AED;
@@ -9,18 +10,46 @@
   --color-jazz: #F59E0B;
   --color-rnb: #EC4899;
   --color-punk: #22C55E;
-  --color-bg-primary: #0F0F0F;
-  --color-bg-secondary: #1A1A1A;
-  --color-bg-card: #242424;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #A3A3A3;
-  --color-border-primary: #333333;
+  /* 新規ジャンル */
+  --color-jpop: #FF6B6B;
+  --color-kpop: #A855F7;
+  --color-metal: #6B7280;
+  --color-indie: #8B5CF6;
+  --color-shoegaze: #C084FC;
+  --color-postrock: #64748B;
+  --color-mathrock: #06B6D4;
+  --color-idol: #FB7185;
+  --color-anisong: #F472B6;
+  --color-vocaloid: #2DD4BF;
+  --color-enka: #D97706;
+  --color-classical: #FBBF24;
+  --color-ambient: #818CF8;
+  --color-reggae: #A3E635;
+  --color-soul: #E879F9;
+  --color-funk: #FB923C;
+  --color-trap: #EF4444;
+  --color-lofi: #94A3B8;
+  --color-house: #FACC15;
+  --color-techno: #22D3EE;
+  --color-blues: #6366F1;
+  --color-folk: #A78BFA;
+  --color-latin: #F97316;
+  --color-ska: #34D399;
+  --color-hardcore: #B91C1C;
+  --color-emo: #1E293B;
+  /* ベースUI（ライトテーマ） */
+  --color-bg-primary: #FAFBFC;
+  --color-bg-secondary: #F0F2F5;
+  --color-bg-card: #FFFFFF;
+  --color-text-primary: #1A1A2E;
+  --color-text-secondary: #6B7280;
+  --color-border-primary: #E5E7EB;
 }
 
 body {
   margin: 0;
-  background-color: #0F0F0F;
-  color: #F5F5F5;
+  background-color: #FAFBFC;
+  color: #1A1A2E;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -39,7 +68,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #CBD5E1;
   border-radius: 2px;
 }
 

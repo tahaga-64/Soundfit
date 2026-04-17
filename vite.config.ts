@@ -22,6 +22,24 @@ export default defineConfig(({ mode }) => {
               proxyReq.setHeader('anthropic-version', '2023-06-01')
             })
           }
+        },
+        '/api/spotify/token': {
+          target: 'https://accounts.spotify.com',
+          changeOrigin: true,
+          rewrite: () => '/api/token',
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              const credentials = Buffer.from(
+                `${env.VITE_SPOTIFY_CLIENT_ID || ''}:${env.VITE_SPOTIFY_CLIENT_SECRET || ''}`
+              ).toString('base64')
+              proxyReq.setHeader('Authorization', `Basic ${credentials}`)
+            })
+          }
+        },
+        '/api/spotify': {
+          target: 'https://api.spotify.com/v1',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api\/spotify/, '')
         }
       }
     }

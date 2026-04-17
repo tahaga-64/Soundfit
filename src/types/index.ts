@@ -1,5 +1,10 @@
 // ジャンル型定義
-export type Genre = 'hiphop' | 'rock' | 'visualkei' | 'citypop' | 'edm' | 'jazz' | 'rnb' | 'punk';
+export type Genre =
+  | 'hiphop' | 'rock' | 'visualkei' | 'citypop' | 'edm' | 'jazz' | 'rnb' | 'punk'
+  | 'jpop' | 'kpop' | 'metal' | 'indie' | 'shoegaze' | 'postrock' | 'mathrock'
+  | 'idol' | 'anisong' | 'vocaloid' | 'enka' | 'classical' | 'ambient'
+  | 'reggae' | 'soul' | 'funk' | 'trap' | 'lofi' | 'house' | 'techno'
+  | 'blues' | 'folk' | 'latin' | 'ska' | 'hardcore' | 'emo';
 
 // ユーザー
 export interface User {
@@ -24,6 +29,8 @@ export interface Song {
   year: number;
   coverUrl: string;
   votes?: number;
+  spotifyTrackId?: string;
+  spotifyArtistId?: string;
 }
 
 // プレイリスト
@@ -42,6 +49,7 @@ export interface Playlist {
 export interface LiveEvent {
   id: string;
   artist: string;
+  spotifyArtistId?: string;
   venue: string;
   date: string;
   genre: Genre;
@@ -139,6 +147,15 @@ export interface TimelineEntry {
   note: string;
 }
 
+// 商品状態
+export type ItemCondition = 'new' | 'like_new' | 'good' | 'fair' | 'poor' | 'bad';
+
+// 配送方法
+export type ShippingMethod = 'soundfit_easy' | 'soundfit_yu' | 'standard_mail' | 'click_post';
+
+// 取引ステータス
+export type TransactionStatus = 'listing' | 'in_transaction' | 'shipped' | 'received' | 'completed' | 'cancelled';
+
 // フリマ出品
 export interface MarketplaceListing {
   id: string;
@@ -149,7 +166,15 @@ export interface MarketplaceListing {
   images: string[];
   category: 'goods' | 'clothing' | 'vinyl' | 'ticket' | 'other';
   genre: Genre;
+  condition: ItemCondition;
+  shippingMethod: ShippingMethod;
+  shippingPayer: 'seller' | 'buyer';
+  shippingCost: number;
+  isAnonymousShipping: boolean;
+  transactionStatus: TransactionStatus;
   status: 'available' | 'sold';
+  likes: number;
+  views: number;
   createdAt: string;
 }
 
@@ -180,6 +205,18 @@ export interface GalleryPhoto {
   artist: string;
   caption: string;
   userId: string;
+  timestamp: string;
+}
+
+// ユーザー投稿（Instagram風）
+export interface UserPost {
+  id: string;
+  userId: string;
+  imageUrl: string;
+  caption: string;
+  tags: string[];
+  likes: number;
+  comments: { userId: string; text: string; timestamp: string }[];
   timestamp: string;
 }
 

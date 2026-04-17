@@ -1,9 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { playlists, songs, users } from '@/data';
+import { getSpotifyArtistUrl } from '@/data/spotifyIds';
 import GenreBadge from '@/components/ui/GenreBadge';
 import SongRow from '@/components/ui/SongRow';
 import UserAvatar from '@/components/ui/UserAvatar';
+import { SpotifyOpenButton } from '@/components/ui/SpotifyButton';
 import { formatNumber } from '@/utils/formatters';
 
 export default function PlaylistDetailPage() {
@@ -15,6 +17,7 @@ export default function PlaylistDetailPage() {
 
   const creator = users.find(u => u.id === playlist.creatorId);
   const playlistSongs = playlist.songIds.map(sid => songs.find(s => s.id === sid)).filter(Boolean);
+  const firstSong = playlistSongs[0];
 
   return (
     <div className="space-y-4 py-4 animate-fade-in">
@@ -33,6 +36,11 @@ export default function PlaylistDetailPage() {
           <div className="flex items-center justify-center gap-2">
             <UserAvatar src={creator.avatar} name={creator.name} size="sm" />
             <span className="text-sm">{creator.name}</span>
+          </div>
+        )}
+        {firstSong && (
+          <div className="pt-1">
+            <SpotifyOpenButton url={getSpotifyArtistUrl(firstSong.artist)} label="Spotifyで聴く" />
           </div>
         )}
       </div>

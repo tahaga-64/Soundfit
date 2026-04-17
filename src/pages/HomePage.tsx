@@ -35,16 +35,21 @@ export default function HomePage() {
       <FeedSection title="注目のライブ" to="/events">
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
           {events.slice(0, 6).map(event => (
-            <Link key={event.id} to={`/events/${event.id}`} className="shrink-0 w-36">
-              <div className="relative">
-                <img src={event.coverUrl} alt={event.artist} className="w-36 h-24 rounded-xl object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <p className="text-[10px] font-bold truncate">{event.artist}</p>
+            <div key={event.id} className="shrink-0 w-36">
+              <Link to={`/events/${event.id}`}>
+                <div className="relative">
+                  <img src={event.coverUrl} alt={event.artist} className="w-36 h-24 rounded-xl object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <p className="text-[10px] font-bold truncate">{event.artist}</p>
+                  </div>
                 </div>
-              </div>
-              <p className="text-[10px] text-text-secondary mt-1 truncate">{event.venue}</p>
-            </Link>
+              </Link>
+              <Link to={`/artist/${encodeURIComponent(event.artist)}`} className="text-[10px] text-text-secondary mt-1 truncate block hover:text-[#1DB954] transition-colors">
+                {event.artist}
+              </Link>
+              <p className="text-[10px] text-text-secondary truncate">{event.venue}</p>
+            </div>
           ))}
         </div>
       </FeedSection>

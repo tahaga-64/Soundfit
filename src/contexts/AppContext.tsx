@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { User, Genre } from '@/types';
-import { currentUser as initialUser, users as allUsers } from '@/data';
+import { users as allUsers } from '@/data';
+import { useAuth } from './AuthContext';
 
 // グローバルステートの型定義
 interface AppContextType {
@@ -16,8 +17,17 @@ const AppContext = createContext<AppContextType | null>(null);
 
 // アプリ全体のStateプロバイダー
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { authUser } = useAuth();
+
+  // 認証済みユーザーがいればそれをベースにする
+  // allUsersにauthUserを含めて、既存モックユーザーと共存させる
+  const initialUser: User = authUser || allUsers[0];
+  const initialUsers = authUser && !allUsers.find(u => u.id === authUser.id)
+    ? [authUser, ...allUsers]
+    : allUsers;
+
   const [currentUser, setCurrentUser] = useState<User>(initialUser);
-  const [users, setUsers] = useState<User[]>(allUsers);
+  const [users, setUsers] = useState<User[]>(initialUsers);
   const [genreFilter, setGenreFilter] = useState<Genre | null>(null);
 
   // ユーザー情報の更新

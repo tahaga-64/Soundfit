@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import type { AISuggestion } from '@/types';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { generateAIPlaylist } from '@/utils/anthropic';
 import { allGenres, genreDisplayNames } from '@/utils/genreHelpers';
+import { getSpotifySearchUrl } from '@/utils/spotify';
 
 export default function AIPlaylistPage() {
   const navigate = useNavigate();
@@ -60,7 +61,12 @@ export default function AIPlaylistPage() {
         </Button>
       </Card>
 
-      {error && <p className="text-sm text-rock text-center">{error}</p>}
+      {error && (
+        <div className="text-center space-y-2">
+          <p className="text-sm text-rock">{error}</p>
+          <Link to="/settings" className="text-xs text-hiphop hover:underline">設定画面でAPIキーを確認 →</Link>
+        </div>
+      )}
 
       {suggestions.length > 0 && (
         <div className="space-y-3">
@@ -71,8 +77,16 @@ export default function AIPlaylistPage() {
                 <span className="text-2xl font-bold text-edm">{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-sm">{s.title}</h4>
-                  <p className="text-xs text-text-secondary">{s.artist}</p>
+                  <Link to={`/artist/${encodeURIComponent(s.artist)}`} className="text-xs text-text-secondary hover:text-[#1DB954] transition-colors">{s.artist}</Link>
                   <p className="text-xs text-text-secondary mt-1">{s.reason}</p>
+                  <a
+                    href={getSpotifySearchUrl(`${s.title} ${s.artist}`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[10px] text-[#1DB954] hover:underline mt-1"
+                  >
+                    Spotifyで聴く →
+                  </a>
                 </div>
               </div>
             </Card>
