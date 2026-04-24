@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { listings, users } from '@/data';
 import type { ItemCondition, ShippingMethod } from '@/types';
-import Button from '@/components/ui/Button';
 import GenreBadge from '@/components/ui/GenreBadge';
 import UserAvatar from '@/components/ui/UserAvatar';
 import Modal from '@/components/ui/Modal';

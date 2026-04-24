@@ -5,9 +5,9 @@ import BottomNav from './BottomNav';
 // アプリ全体のレイアウトシェル
 export default function AppLayout() {
   return (
-    <div className="min-h-dvh bg-bg-primary text-text-primary">
+    <div className="min-h-dvh bg-mesh text-text-primary">
       <TopBar />
-      <main className="max-w-lg mx-auto pt-14 pb-20 px-4">
+      <main className="max-w-lg mx-auto pt-14 pb-28 px-4">
         <Outlet />
       </main>
       <BottomNav />
