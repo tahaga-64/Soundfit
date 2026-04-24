@@ -6,10 +6,10 @@ export default function TabBar({ tabs, activeTab, onTabChange }: { tabs: string[
         <button
           key={tab}
           onClick={() => onTabChange(tab)}
-          className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
             activeTab === tab
-              ? 'bg-hiphop text-black'
-              : 'bg-bg-card text-text-secondary hover:text-text-primary'
+              ? 'bg-gradient-to-r from-hiphop to-edm text-black shadow-md shadow-hiphop/25'
+              : 'glass text-text-secondary hover:text-text-primary border border-white/30'
           }`}
         >
           {tab}

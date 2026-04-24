@@ -11,8 +11,8 @@ export default function Button({ children, variant = 'primary', size = 'md', cla
   const base = 'font-semibold rounded-lg transition-all active:scale-95 disabled:opacity-50';
   const sizeClass = size === 'sm' ? 'text-xs px-3 py-1.5' : 'text-sm px-4 py-2.5';
   const variantClass = {
-    primary: 'bg-hiphop text-black hover:opacity-90',
-    secondary: 'bg-bg-card text-text-primary border border-border-primary hover:bg-border-primary',
+    primary: 'bg-gradient-to-r from-hiphop via-edm to-visualkei text-white shadow-md shadow-hiphop/25 hover:shadow-lg hover:shadow-edm/30',
+    secondary: 'glass border border-border-primary text-text-primary hover:bg-white/80',
     ghost: 'text-text-secondary hover:text-text-primary',
   }[variant];
 

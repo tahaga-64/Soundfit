@@ -48,7 +48,8 @@
 
 body {
   margin: 0;
-  background-color: #FAFBFC;
+  background: linear-gradient(135deg, #FAFBFC 0%, #FFF8F0 30%, #F0F4FF 60%, #FFF5F9 100%);
+  background-attachment: fixed;
   color: #1A1A2E;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -92,3 +93,122 @@ body {
 /* スクロールバー非表示ユーティリティ */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== Neo-Wave Design System ===== */
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+}
+
+/* Animated gradient mesh background */
+.bg-mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #FAFBFC 0%, #F0F2F5 100%);
+  background-size: 200% 200%;
+  animation: mesh-shift 12s ease-in-out infinite;
+}
+
+@keyframes mesh-shift {
+  0%, 100% { background-position: 0% 0%; }
+  25% { background-position: 50% 25%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 75%; }
+}
+
+/* Gradient text */
+.gradient-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(59, 130, 246, 0.25); }
+}
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(20px, -30px) scale(1.05); }
+  50% { transform: translate(-10px, 20px) scale(0.95); }
+  75% { transform: translate(15px, 10px) scale(1.02); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-x 6s ease-in-out infinite;
+}
+
+/* Wave motion for decorative elements */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(2deg) translateY(-5px); }
+  50% { transform: rotate(-1deg) translateY(3px); }
+  75% { transform: rotate(1deg) translateY(-2px); }
+}
+.animate-wave {
+  animation: wave 5s ease-in-out infinite;
+}
+
+/* Gradient-shift animation */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Rotating gradient ring for avatars */
+@keyframes ring-rotate {
+  0% { --ring-angle: 0deg; }
+  100% { --ring-angle: 360deg; }
+}
+@property --ring-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.gradient-ring {
+  background: conic-gradient(from var(--ring-angle), #FFD700, #3B82F6, #7C3AED, #EC4899, #22C55E, #FFD700);
+  animation: ring-rotate 4s linear infinite;
+}
+
+/* Gradient border accent (for cards) */
+.gradient-border-left {
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(to bottom, #FFD700, #3B82F6, #7C3AED) 1;
+}
+
+/* Gradient animated line */
+.gradient-line {
+  background: linear-gradient(90deg, #FFD700, #3B82F6, #7C3AED, #EC4899, #FFD700);
+  background-size: 200% 100%;
+  animation: gradient-x 4s linear infinite;
+}
